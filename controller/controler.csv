@@ -1,0 +1,8 @@
+source,table,comand_sql,limit_sql,target_bucket,target_folder_path
+postgress,cidades,select * from ,10,bkt-motors-word,landing
+postgress,clientes,select * from ,10,bkt-motors-word,landing
+postgress,concessionarias,select * from ,10,bkt-motors-word,landing
+postgress,estados,select * from ,10,bkt-motors-word,landing
+postgress,veiculos,select * from ,10,bkt-motors-word,landing
+postgress,vendas,select * from ,10,bkt-motors-word,landing
+postgress,vendedores,select * from ,10,bkt-motors-word,landing
