@@ -52,10 +52,10 @@ def main(argv=None):
         project='motors-word-etl-process',
         runner='DataflowRunner',
         streaming=False,
-        job_name=f'bach-motors-word-etl-process-{formatted_datetime}',
+        job_name=f'etl-dataflow-motors-word-{formatted_datetime}',
         temp_location='gs://bkt-motors-word/temp',
         staging_location='gs://bkt-motors-word/staging',
-        template_location=f'gs://bkt-motors-word/templates/template-bach-motors-word-etl-process-{formatted_datetime}',
+        #template_location=f'gs://bkt-motors-word/templates/etl-dataflow-motors-word-{formatted_datetime}',
         autoscaling_algorithm='THROUGHPUT_BASED',
         worker_machine_type='n1-standard-4',
         service_account_key_file='./keys',
@@ -71,8 +71,8 @@ def main(argv=None):
         save_main_session=False,
         #experiments='use_runner_v2',
         prebuild_sdk_container_engine='cloud_build',
-        docker_registry_push_url='southamerica-east1-docker.pkg.dev/motors-word-etl-process/bach-motors-word-etl-process/motors-dev',
-        sdk_container_image='southamerica-east1-docker.pkg.dev/motors-word-etl-process/bach-motors-word-etl-process/motors-dev:latest',
+        docker_registry_push_url='southamerica-east1-docker.pkg.dev/motors-word-etl-process/etl-dataflow-motors-word/motors-dev',
+        sdk_container_image='southamerica-east1-docker.pkg.dev/motors-word-etl-process/etl-dataflow-motors-word/motors-dev:latest',
         sdk_location='container',
         requirements_file='./requirements.txt',
         metabase_file='./metadata.json',
@@ -81,14 +81,20 @@ def main(argv=None):
     )
     
     # Importando as funções dos pipelines
-    from functions.ingest_tables import IngestTables
+    from functions.load_landing import LoadLanding
+    from functions.load_raw import LoadRaw
     
     # Criando o pipeline
-    with beam.Pipeline(options=options) as pipeline:        
-        ingest_tables = (
+    with beam.Pipeline() as pipeline:        
+        load_landing = (
             pipeline
             | 'Start Pipeline' >> beam.Create([None])
-            | 'Get Tables' >> beam.ParDo(IngestTables())   
+            | 'Get Tables' >> beam.ParDo(LoadLanding())   
+        )
+        
+        load_raw = (
+            load_landing
+            | 'Load Tables To BQ' >> beam.ParDo(LoadRaw())   
         )
         
 if __name__ == '__main__':
