@@ -85,7 +85,7 @@ def main(argv=None):
     from functions.load_raw import LoadRaw
     
     # Criando o pipeline
-    with beam.Pipeline() as pipeline:        
+    with beam.Pipeline(options=options) as pipeline:        
         load_landing = (
             pipeline
             | 'Start Pipeline' >> beam.Create([None])
